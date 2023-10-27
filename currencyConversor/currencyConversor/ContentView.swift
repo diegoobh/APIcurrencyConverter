@@ -14,34 +14,50 @@ struct ContentView: View {
     private let currencyCodes = ["USD", "EUR", "JPY", "GBP"]
     
     var body: some View {
-        
-        VStack(spacing: 20){
-            TextField("Introduce la cantidad ", text:
-                        $viewModel.amount)
-            .keyboardType(.decimalPad)
-            .padding()
-            .border(Color.gray, width: 0.5)
-            
-            Picker("Desde Moneda", selection:
-                    $viewModel.baseCurrency){
-                ForEach(currencyCodes, id: \.self){
-                    currency in Text(currency)
+        NavigationView{
+            VStack{
+                Form{
+                    Section{ Text("Cantidad a convertir")
+                        TextField("Introduce la cantidad ", text:
+                                    $viewModel.amount)
+                        .keyboardType(.decimalPad)
+                        .padding()
+                        .border(Color.gray)
+                    }
+                    Section{ Text("De moneda: ")
+                        Picker("Desde Moneda", selection:
+                                $viewModel.baseCurrency){
+                            ForEach(currencyCodes, id: \.self){
+                                currency in Text(currency)
+                            }
+                        }.pickerStyle(SegmentedPickerStyle())
+                    }
+                    Section{ Text("A moneda: ")
+                        Picker("A Moneda", selection: $viewModel.targetCurrency){
+                            ForEach(currencyCodes, id: \.self){
+                                currency in Text(currency)
+                            }
+                        }.pickerStyle(SegmentedPickerStyle())
+                    }
+                    Section{
+                        Button("Convertir"){
+                            viewModel.fetchRate()
+                            print(viewModel.amount)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.blue)
+                        .padding(.vertical)
+                    }
+                    Section{ Text("Cantidad convertida: ")
+                        Text(viewModel.result)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-            }.pickerStyle(SegmentedPickerStyle())
-            
-            Picker("A Moneda", selection: $viewModel.targetCurrency){
-                ForEach(currencyCodes, id: \.self){
-                    currency in Text(currency)
-                }
-            }.pickerStyle(SegmentedPickerStyle())
-            
-            Button("Convertir"){
-                viewModel.fetchRate()
-                print(viewModel.amount)
-            }.padding(.vertical)
-            
-            Text(viewModel.result)
-                .multilineTextAlignment(.center)
+            }.padding()
+            .navigationTitle("USAL Exchange")
+            .navigationBarTitleDisplayMode(.automatic)
+            .multilineTextAlignment(.center)
+        }
             /*NavigationView{
              VStack {
              Form{
@@ -78,7 +94,7 @@ struct ContentView: View {
              .navigationTitle("USAL Exchange")
              .navigationBarTitleDisplayMode(.inline)
              }*/
-        }.padding()
+       
     }
 }
 
